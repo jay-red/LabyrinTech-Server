@@ -171,17 +171,83 @@ void on_message( uWS::WebSocket<false, true>* ws, string_view msg, uWS::OpCode o
                 p = p->next;
             }
             break;
-        case OP_START: // unused
+        case OP_START:
+            ws->publish( "broadcast", msg, uWS::OpCode::TEXT );
             break;
         case OP_POS:
+            resp = "              ";
+            resp[ 0 ] = OP_POS;
+            resp[ 1 ] = ( char )( ( c->player->uid >> 8 ) & 0XFF );
+            resp[ 2 ] = ( char )( ( c->player->uid ) & 0xFF );
+            resp[ 3 ] = msg[ 1 ]; 
+            resp[ 4 ] = msg[ 2 ];
+            resp[ 5 ] = msg[ 3 ];
+            resp[ 6 ] = msg[ 4 ];
+            resp[ 7 ] = msg[ 5 ];
+            resp[ 8 ] = msg[ 6 ];
+            resp[ 9 ] = msg[ 7 ];
+            resp[ 10 ] = msg[ 8 ];
+            resp[ 11 ] = msg[ 9 ];
+            resp[ 12 ] = msg[ 10 ];
+            resp[ 13 ] = msg[ 11 ];
+            ws->publish( "broadcast", msg, uWS::OpCode::TEXT );
             break;
         case OP_SMOVE:
+            resp = "             ";
+            resp[ 0 ] = OP_SMOVE;
+            resp[ 1 ] = ( char )( ( c->player->uid >> 8 ) & 0XFF );
+            resp[ 2 ] = ( char )( ( c->player->uid ) & 0xFF );
+            resp[ 3 ] = msg[ 1 ];
+            resp[ 4 ] = msg[ 2 ];
+            resp[ 5 ] = msg[ 3 ];
+            resp[ 6 ] = msg[ 4 ];
+            resp[ 7 ] = msg[ 5 ];
+            resp[ 8 ] = msg[ 6 ];
+            resp[ 9 ] = msg[ 7 ];
+            resp[ 10 ] = msg[ 8 ];
+            resp[ 11 ] = msg[ 9 ];
+            resp[ 12 ] = msg[ 10 ];
+            ws->publish( "broadcast", msg, uWS::OpCode::TEXT );
             break;
         case OP_EMOVE:
+            resp = "             ";
+            resp[ 0 ] = OP_EMOVE;
+            resp[ 1 ] = ( char )( ( c->player->uid >> 8 ) & 0XFF );
+            resp[ 2 ] = ( char )( ( c->player->uid ) & 0xFF );
+            resp[ 3 ] = msg[ 1 ];
+            resp[ 4 ] = msg[ 2 ];
+            resp[ 5 ] = msg[ 3 ];
+            resp[ 6 ] = msg[ 4 ];
+            resp[ 7 ] = msg[ 5 ];
+            resp[ 8 ] = msg[ 6 ];
+            resp[ 9 ] = msg[ 7 ];
+            resp[ 10 ] = msg[ 8 ];
+            ws->publish( "broadcast", msg, uWS::OpCode::TEXT );
             break;
         case OP_SHOOT:
+            resp = "             ";
+            resp[ 0 ] = OP_SHOOT;
+            resp[ 1 ] = ( char )( ( c->player->uid >> 8 ) & 0XFF );
+            resp[ 2 ] = ( char )( ( c->player->uid ) & 0xFF );
+            resp[ 3 ] = msg[ 1 ];
+            resp[ 4 ] = msg[ 2 ];
+            resp[ 5 ] = msg[ 3 ];
+            resp[ 6 ] = msg[ 4 ];
+            resp[ 7 ] = msg[ 5 ];
+            resp[ 8 ] = msg[ 6 ];
+            resp[ 9 ] = msg[ 7 ];
+            resp[ 10 ] = msg[ 8 ];
+            resp[ 11 ] = msg[ 9 ];
+            resp[ 12 ] = msg[ 10 ];
+            ws->publish( "broadcast", msg, uWS::OpCode::TEXT );
             break;
         case OP_HEALTH:
+            resp = "             ";
+            resp[ 0 ] = OP_SMOVE;
+            resp[ 1 ] = ( char )( ( c->player->uid >> 8 ) & 0XFF );
+            resp[ 2 ] = ( char )( ( c->player->uid ) & 0xFF );
+            resp[ 3 ] = msg[ 1 ];
+            ws->publish( "broadcast", msg, uWS::OpCode::TEXT );
             break;
     }
     //ws->publish( "broadcast", msg, opcode );
@@ -214,7 +280,7 @@ int main() {
             LTConnData* d = ( LTConnData* )( ws->getUserData() );
             d->c->ws = NULL;
             if( d->c->joined ) --g->count;
-            if( g->room && g->room->ws ) {
+            if( g->room && g->room->ws && d->c->joined ) {
                 string resp = "";
                 resp.push_back( OP_LEAVE );
                 g->room->ws->send( resp, uWS::OpCode::TEXT );
