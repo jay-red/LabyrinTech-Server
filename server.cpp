@@ -117,7 +117,8 @@ void on_message( uWS::WebSocket<false, true>* ws, string_view msg, uWS::OpCode o
             break;
         case OP_JOIN:
             resp.push_back( OP_JOIN );
-            if( g->room_created && !c->joined ) {
+            if( c->joined ) break;
+            if( g->room_created ) {
                 if( g->cdown_started || g->game_started ) resp.push_back( RESP_JOIN_STARTED );
                 else if( g->count == 512 ) resp.push_back( RESP_JOIN_FULLROOM );
                 else {
