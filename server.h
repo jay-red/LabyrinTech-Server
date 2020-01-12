@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 #include <ctime>
+#include <cstdio>
 
 #define OP_CREATE   0x00
 #define OP_JOIN     0x01
