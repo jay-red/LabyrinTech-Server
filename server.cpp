@@ -7,7 +7,7 @@ struct us_listen_socket_t* listen_socket;
 Game* g = new Game;
 
 void init_player( Player* p ) {
-
+    set_player_uid( p, g->count );
 }
 
 short get_player_uid( Player* p ) {
@@ -68,6 +68,9 @@ void init_client( LabyrinTechClient* c, uWS::WebSocket<false, true>* ws ) {
 void init_game( Game* g ) {
     g->players = new Player*[512];
     g->room = NULL;
+    for( int i = 0; i < 512; i++ ) {
+        g->players[ i ] = NULL;
+    }
 }
 
 void reset_game( Game *g ) {
@@ -89,6 +92,7 @@ void reset_game( Game *g ) {
         g->room = NULL;
     }
     for( int i = 0; i < 512; i++ ) {
+        delete g->players[ i ];
         g->players[ i ] = NULL;
     }
     g->seed = time( 0 );
@@ -100,8 +104,10 @@ void reset_game( Game *g ) {
 
 void on_message( uWS::WebSocket<false, true>* ws, string_view msg, uWS::OpCode opcode ) {
     LabyrinTechClient* c = ( ( LTConnData* ) ws->getUserData() )->c;
+    LabyrinTechClient* p = g->head;
     char op = msg[ 0 ];
     string resp = "";
+    string temp;
     switch( op ) {
         case OP_CREATE:
             g->room = c;
@@ -135,6 +141,34 @@ void on_message( uWS::WebSocket<false, true>* ws, string_view msg, uWS::OpCode o
             reset_game( g );
             break;
         case OP_CDOWN:
+            resp.push_back( OP_CDOWN );
+            if( g->room->ws ) g->room->ws->send( resp, uWS::OpCode::TEXT );
+            resp.push_back( ( g->seed >> 24 ) & 0xFF );
+            resp.push_back( ( g->seed >> 16 ) & 0xFF );
+            resp.push_back( ( g->seed >> 8 ) & 0xFF );
+            resp.push_back( g->seed & 0xFF );
+            g->count = 0;
+            while( p ) {
+                if( p->ws && p->joined ) { 
+                    p->player = new Player;
+                    g->players[ g->count ] = p->player;
+                    init_player( p->player );
+                    ++g->count;
+                }
+                p = p->next;
+            }
+            p = g->head;
+            while( p ) {
+                if( p->player && p->ws ) {
+                    temp = resp;
+                    temp.push_back( ( p->player->uid >> 2 ) & 0xFF );
+                    temp.push_back( p->player->uid & 0xFF );
+                    temp.push_back( ( g->count >> 2 ) & 0xFF );
+                    temp.push_back( g->count & 0xFF );
+                    p->ws->send( temp, uWS::OpCode::TEXT );
+                }
+                p = p->next;
+            }
             break;
         case OP_START: // unused
             break;
