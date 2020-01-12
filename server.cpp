@@ -162,9 +162,9 @@ void on_message( uWS::WebSocket<false, true>* ws, string_view msg, uWS::OpCode o
             while( p ) {
                 if( p->player && p->ws ) {
                     temp = resp;
-                    temp.push_back( ( char )( ( p->player->uid >> 1 ) & 0xFF ) );
+                    temp.push_back( ( char )( ( p->player->uid >> 8 ) & 0xFF ) );
                     temp.push_back( ( char )( p->player->uid & 0xFF ) );
-                    temp.push_back( ( char )( ( g->count >> 1 ) & 0xFF ) );
+                    temp.push_back( ( char )( ( g->count >> 8 ) & 0xFF ) );
                     temp.push_back( ( char )( g->count & 0xFF ) );
                     p->ws->send( temp, uWS::OpCode::TEXT );
                 }
