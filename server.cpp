@@ -144,10 +144,10 @@ void on_message( uWS::WebSocket<false, true>* ws, string_view msg, uWS::OpCode o
         case OP_CDOWN:
             resp.push_back( OP_CDOWN );
             if( g->room->ws ) g->room->ws->send( resp, uWS::OpCode::TEXT );
-            resp.push_back( ( g->seed >> 24 ) & 0xFF );
-            resp.push_back( ( g->seed >> 16 ) & 0xFF );
-            resp.push_back( ( g->seed >> 8 ) & 0xFF );
-            resp.push_back( g->seed & 0xFF );
+            resp.push_back( ( char )( ( g->seed >> 24 ) & 0xFF ) );
+            resp.push_back( ( char )( ( g->seed >> 16 ) & 0xFF ) );
+            resp.push_back( ( char )( ( g->seed >> 8 ) & 0xFF ) );
+            resp.push_back( ( char )( g->seed & 0xFF ) );
             g->count = 0;
             while( p ) {
                 if( p->ws && p->joined ) { 
@@ -162,10 +162,10 @@ void on_message( uWS::WebSocket<false, true>* ws, string_view msg, uWS::OpCode o
             while( p ) {
                 if( p->player && p->ws ) {
                     temp = resp;
-                    temp.push_back( ( p->player->uid >> 2 ) & 0xFF );
-                    temp.push_back( p->player->uid & 0xFF );
-                    temp.push_back( ( g->count >> 2 ) & 0xFF );
-                    temp.push_back( g->count & 0xFF );
+                    temp.push_back( ( char )( ( p->player->uid >> 2 ) & 0xFF ) );
+                    temp.push_back( ( char )( p->player->uid & 0xFF ) );
+                    temp.push_back( ( char )( ( g->count >> 2 ) & 0xFF ) );
+                    temp.push_back( ( char )( g->count & 0xFF ) );
                     p->ws->send( temp, uWS::OpCode::TEXT );
                 }
                 p = p->next;
