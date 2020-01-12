@@ -95,7 +95,7 @@ void reset_game( Game *g ) {
         delete g->players[ i ];
         g->players[ i ] = NULL;
     }
-    g->seed = time( 0 );
+    g->seed = ( uint32 ) time( 0 );
     g->count = 0;
     g->room_created = false;
     g->cdown_started = false;
