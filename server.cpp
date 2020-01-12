@@ -144,10 +144,12 @@ void on_message( uWS::WebSocket<false, true>* ws, string_view msg, uWS::OpCode o
         case OP_CDOWN:
             resp.push_back( OP_CDOWN );
             if( g->room->ws ) g->room->ws->send( resp, uWS::OpCode::TEXT );
-            resp.push_back( ( char )( ( g->seed >> 24 ) & 0xFF ) );
-            resp.push_back( ( char )( ( g->seed >> 16 ) & 0xFF ) );
-            resp.push_back( ( char )( ( g->seed >> 8 ) & 0xFF ) );
-            resp.push_back( ( char )( g->seed & 0xFF ) );
+            resp = "           ";
+            resp[ 0 ] = OP_CDOWN;
+            resp[ 1 ] = ( ( char )( ( g->seed >> 24 ) & 0xFF ) );
+            resp[ 2 ] = ( ( char )( ( g->seed >> 16 ) & 0xFF ) );
+            resp[ 3 ] = ( ( char )( ( g->seed >> 8 ) & 0xFF ) );
+            resp[ 4 ] = ( ( char )( g->seed & 0xFF ) );
             g->count = 0;
             while( p ) {
                 if( p->ws && p->joined ) { 
@@ -161,12 +163,11 @@ void on_message( uWS::WebSocket<false, true>* ws, string_view msg, uWS::OpCode o
             p = g->head;
             while( p ) {
                 if( p->player && p->ws ) {
-                    temp = resp;
-                    temp.push_back( ( char )( ( p->player->uid >> 8 ) & 0xFF ) );
-                    temp.push_back( ( char )( p->player->uid & 0xFF ) );
-                    temp.push_back( ( char )( ( g->count >> 8 ) & 0xFF ) );
-                    temp.push_back( ( char )( g->count & 0xFF ) );
-                    p->ws->send( temp, uWS::OpCode::TEXT );
+                    resp[ 5 ] = ( ( char )( ( p->player->uid >> 8 ) & 0xFF ) );
+                    resp[ 6 ] = ( ( char )( p->player->uid & 0xFF ) );
+                    resp[ 7 ] = ( ( char )( ( g->count >> 8 ) & 0xFF ) );
+                    resp[ 8 ] = ( ( char )( g->count & 0xFF ) );
+                    p->ws->send( resp, uWS::OpCode::TEXT );
                 }
                 p = p->next;
             }
