@@ -234,8 +234,11 @@ void on_message( uWS::WebSocket<false, true>* ws, string_view msg, uWS::OpCode o
             resp.append( msg.substr( 1 ) );
             ws->publish( "broadcast", resp, uWS::OpCode::TEXT );
             break;
-            break;
         case OP_HEALTH:
+            msg_push_back_char( &resp, op );
+            msg_push_back_short( &resp, c->player->uid );
+            resp.append( msg.substr( 1 ) );
+            ws->publish( "broadcast", resp, uWS::OpCode::TEXT );
             break;
     }
     //ws->publish( "broadcast", msg, opcode );
