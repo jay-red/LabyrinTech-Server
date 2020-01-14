@@ -25,30 +25,32 @@
 #define RESP_JOIN_STARTED   0x03
 
 typedef uint32_t uint32;
+typedef unsigned char uchar;
+typedef unsigned short ushort;
 
 struct Player {
-    short uid;
-    short rotation;
+    ushort uid;
+    ushort rotation;
     uint32 pos_x;
     uint32 pos_y;
-    char health;
+    uchar health;
     bool moving;
 };
 
 void init_player( Player* p );
 
-short get_player_uid( Player* p );
-short get_player_rotation( Player* p );
+ushort get_player_uid( Player* p );
+ushort get_player_rotation( Player* p );
 uint32 get_player_pos_x( Player* p );
 uint32 get_player_pos_y( Player* p );
-char get_player_health( Player* p );
+uchar get_player_health( Player* p );
 bool get_player_moving( Player* p );
 
-void set_player_uid( Player* p, short uid );
-void set_player_rotation( Player* p, short rotation );
+void set_player_uid( Player* p, ushort uid );
+void set_player_rotation( Player* p, ushort rotation );
 void set_player_pos_x( Player* p, uint32 pos_x );
 void set_player_pos_y( Player* p, uint32 pos_y );
-void set_player_health( Player* p, char health );
+void set_player_health( Player* p, uchar health );
 void set_player_moving( Player* p, bool moving );
 
 struct LabyrinTechClient {
@@ -71,7 +73,7 @@ struct Game {
     LabyrinTechClient* tail;
     Player** players;
     uint32 seed;
-    short count;
+    ushort count;
     bool room_created;
     bool cdown_started;
     bool game_started;
@@ -79,6 +81,16 @@ struct Game {
 
 void init_game( Game* g );
 void reset_game( Game* g );
+
+void msg_push_back_bool( std::string* msg, bool b );
+
+void msg_push_back_char( std::string* msg, uchar c );
+
+void msg_push_back_short( std::string* msg, ushort s );
+
+void msg_push_back_int( std::string* msg, int n );
+
+void parse_msg( std::string* buffer, std::string_view* msg );
 
 void on_message( uWS::WebSocket<false, true>* ws, std::string_view msg, uWS::OpCode opcode );
 
