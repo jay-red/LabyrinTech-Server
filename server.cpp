@@ -63,6 +63,7 @@ void init_client( LabyrinTechClient* c, uWS::WebSocket<false, true>* ws ) {
     c->next = NULL;
     c->ws = ws;
     c->player = NULL; 
+    c->joined = false;
 }
 
 void init_game( Game* g ) {
